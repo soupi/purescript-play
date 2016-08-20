@@ -11,11 +11,22 @@ import Signal.DOM as S
 
 import Utils
 
+type Input =
+  { direction :: Point
+  , action1 :: Boolean
+  , action2 :: Boolean
+  }
+
 input = do
   frames <- S.animationFrame
   arrowsInputs <- arrows
-  pure (const <$> arrowsInputs <*> frames)
-
+  aBtn <- S.keyPressed zKeyCode
+  bBtn <- S.keyPressed xKeyCode
+  pure $ (\_ arr act1 act2 -> { direction: arr, action1: act1, action2: act2 })
+    <$> frames
+    <*> arrowsInputs
+    <*> aBtn
+    <*> bBtn
 
 arrows = do
   leftInput  <- S.keyPressed leftKeyCode
@@ -34,4 +45,5 @@ rightKeyCode = 39
 upKeyCode = 38
 downKeyCode = 40
 
-
+zKeyCode = 90
+xKeyCode = 88
