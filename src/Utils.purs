@@ -1,19 +1,11 @@
 module Utils where
 
-import Prelude
-
-import Data.Lens
-import Data.Array
-import Data.Maybe
-import Math
-import Data.Foldable
-import Data.Traversable
-import Control.Apply
-import Control.Monad.Eff
-import Graphics.Canvas as C
-import Signal as S
-import Signal.DOM as S
 import Control.Monad.Aff
+import Graphics.Canvas as C
+import Data.Lens (Lens', lens)
+import Data.Maybe (Maybe)
+import Data.Tuple (Tuple(Tuple))
+import Graphics.Canvas (CANVAS)
 
 width :: Number
 width = 1024.0
@@ -24,15 +16,18 @@ type Point =
   { x :: Number, y :: Number }
 
 makePoint :: Number -> Number -> Point
-makePoint x y = { x: x, y: y }
+makePoint _x _y = { x: _x, y: _y }
 
-loadImageData :: String -> Aff _ C.CanvasImageSource
-loadImageData src = makeAff (\error success -> C.withImage src success)
+loadImageData :: forall e. String -> Aff (canvas :: CANVAS | e) (Maybe C.CanvasImageSource)
+loadImageData src = makeAff (\error success -> C.tryLoadImage src success)
 
 ------------
 -- Lenses
 ------------
 
+x :: Lens' Point Number
 x = lens _.x (_ { x = _ })
+y :: Lens' Point Number
 y = lens _.y (_ { y = _ })
 
+infixl 0 Tuple as ><

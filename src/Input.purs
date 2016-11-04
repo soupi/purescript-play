@@ -1,15 +1,12 @@
 module Input where
 
-import Prelude
-
-import Data.Foldable
-import Data.Traversable
-import Control.Apply
-import Control.Monad.Eff
-import Signal as S
-import Signal.DOM as S
-
 import Utils
+import Signal.DOM as S
+import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Timer (TIMER)
+import DOM (DOM)
+import Prelude (pure, bind, (<*>), (-), (<$>), ($))
+import Signal (Signal)
 
 type Input =
   { direction :: Point
@@ -17,6 +14,7 @@ type Input =
   , action2 :: Boolean
   }
 
+input :: forall e. Eff (dom :: DOM, timer :: TIMER | e) (Signal Input)               
 input = do
   frames <- S.animationFrame
   arrowsInputs <- arrows
@@ -28,6 +26,7 @@ input = do
     <*> aBtn
     <*> bBtn
 
+arrows :: forall e. Eff (dom :: DOM | e) (Signal { x :: Number, y :: Number })               
 arrows = do
   leftInput  <- S.keyPressed leftKeyCode
   rightInput <- S.keyPressed rightKeyCode
@@ -40,10 +39,16 @@ arrows = do
       <*> upInput
       <*> downInput
 
+leftKeyCode :: Int
 leftKeyCode = 37
-rightKeyCode = 39
+upKeyCode :: Int
 upKeyCode = 38
+rightKeyCode :: Int
+rightKeyCode = 39
+downKeyCode :: Int
 downKeyCode = 40
 
-zKeyCode = 90
+xKeyCode :: Int
 xKeyCode = 88
+zKeyCode :: Int
+zKeyCode = 90

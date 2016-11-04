@@ -1,8 +1,4 @@
-Playing around with purescript-signal + purescript-canvas
+Playing around with purescript-signal + purescript-canvas.
 
-
-
-Current Progress:
-
-![](progress.gif)
+Current Progress [here](https://soupi.github.io/purescript-play).
 

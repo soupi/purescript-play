@@ -1,20 +1,11 @@
 module Collisions where
 
-import Prelude
-
-import Data.Lens
-import Data.Array
-import Data.Maybe
-import Math
-import Data.Foldable
-import Data.Traversable
-import Control.Apply
-import Control.Monad.Eff
-import Graphics.Canvas as C
-import Signal as S
-import Signal.DOM as S
-
 import Utils
+import Data.Array (zipWith)
+import Data.Lens (Lens', lens, set)
+import Data.Maybe (Maybe(..))
+import Data.Traversable (foldl)
+import Prelude (map, negate, (+), (==), ($), (<=), (&&), (/), (||), (>=))
 
 ----------------
 -- Collisions
@@ -95,7 +86,8 @@ addCollisions (Just a) (Just b) =
 ------------
 -- Lenses
 ------------
-
+collision :: forall a. Lens' { collision :: Maybe Point | a } (Maybe Point)
 collision = lens _.collision (_ { collision = _ })
+pos :: forall a. Lens' { pos :: Point | a } Point
 pos = lens _.pos (_ { pos = _ })
 
