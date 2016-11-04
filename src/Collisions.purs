@@ -2,6 +2,7 @@ module Collisions where
 
 import Utils
 import Data.Array (zipWith)
+import Data.BooleanAlgebra (not)
 import Data.Lens (Lens', lens, set)
 import Data.Maybe (Maybe(..))
 import Data.Traversable (foldl)
@@ -11,34 +12,35 @@ import Prelude (map, negate, (+), (==), ($), (<=), (&&), (/), (||), (>=))
 -- Collisions
 ----------------
 
-testCollisionWith :: forall a b. Array { collision :: Maybe Point, size :: Point, pos :: Point | a }
-                  -> Array { collision :: Maybe Point, size :: Point, pos :: Point | b }
-                  -> Array { collision :: Maybe Point, size :: Point, pos :: Point | a }
+testCollisionWith :: forall a b
+   . Array { collision :: Maybe Point, size :: Point, pos :: Point | a }
+  -> Array { collision :: Maybe Point, size :: Point, pos :: Point | b }
+  -> Array { collision :: Maybe Point, size :: Point, pos :: Point | a }
 testCollisionWith objs1 objs2 =
   map (\x -> set collision (foldl addCollisions Nothing $ map (collisionDetection x) objs2) x) objs1
 
-collisionDetection :: forall a b. { size :: Point, pos :: Point | a }
-          -> { size :: Point, pos :: Point | b }
-          -> Maybe Point
+collisionDetection :: forall a b
+   . { size :: Point, pos :: Point | a }
+  -> { size :: Point, pos :: Point | b }
+  -> Maybe Point
 collisionDetection a b =
   if testCollision a b then collisionDirection a b else Nothing
 
-testCollision :: forall a b. { size :: Point, pos :: Point | a }
+testCollision :: forall a b
+               . { size :: Point, pos :: Point | a }
               -> { size :: Point, pos :: Point | b }
               -> Boolean
 testCollision a b =
-  if
-      a.pos.x >= b.pos.x + b.size.x
+  not
+   (  a.pos.x >= b.pos.x + b.size.x
    || a.pos.y >= b.pos.y + b.size.y
    || a.pos.x + a.size.x <= b.pos.x
    || a.pos.y + a.size.y <= b.pos.y
-  then
-    false
-  else
-    true
+   )
 
-cornerRects :: forall r. { size :: Point, pos :: Point | r }
-        -> Array { size :: Point, pos :: Point }
+cornerRects :: forall r
+   .       { size :: Point, pos :: Point | r }
+  -> Array { size :: Point, pos :: Point }
 cornerRects obj =
   let size = { x: obj.size.x / 2.0, y: obj.size.y / 2.0 }
   in
@@ -48,8 +50,7 @@ cornerRects obj =
     , { pos: makePoint (obj.pos.x + obj.size.x / 2.0) (obj.pos.y + obj.size.y / 2.0), size: size }
     ]
 
-corners :: forall r. { size :: Point, pos :: Point | r }
-        -> Array Point
+corners :: forall r. { size :: Point, pos :: Point | r } -> Array Point
 corners obj =
   [ makePoint obj.pos.x obj.pos.y
   , makePoint (obj.pos.x + obj.size.x) obj.pos.y
@@ -57,15 +58,14 @@ corners obj =
   , makePoint (obj.pos.x + obj.size.x) (obj.pos.y + obj.size.y)
   ]
 
-pointInRect :: forall r. Point
-            -> { pos :: Point, size :: Point | r }
-            -> Boolean
+pointInRect :: forall r. Point -> { pos :: Point, size :: Point | r } -> Boolean
 pointInRect p obj =
      (obj.pos.x <= p.x && p.x <= obj.pos.x + obj.size.x)
   && (obj.pos.y <= p.y && p.y <= obj.pos.y + obj.size.y)
 
 
-collisionDirection :: forall a b. { size :: Point, pos :: Point | a }
+collisionDirection :: forall a b
+                    . { size :: Point, pos :: Point | a }
                    -> { size :: Point, pos :: Point | b }
                    -> Maybe Point
 collisionDirection a b =
