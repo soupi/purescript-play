@@ -12,19 +12,22 @@ type Input =
   { direction :: Point
   , action1 :: Boolean
   , action2 :: Boolean
+  , esc     :: Boolean
   }
 
 input :: forall e. Eff (dom :: DOM, timer :: TIMER | e) (Signal Input)               
 input = do
   frames <- S.animationFrame
   arrowsInputs <- arrows
-  aBtn <- S.keyPressed zKeyCode
-  bBtn <- S.keyPressed xKeyCode
-  pure $ (\_ arr act1 act2 -> { direction: arr, action1: act1, action2: act2 })
+  aBtn   <- S.keyPressed zKeyCode
+  bBtn   <- S.keyPressed xKeyCode
+  escBtn <- S.keyPressed escKeyCode
+  pure $ (\_ arr act1 act2 esc -> { direction: arr, action1: act1, action2: act2, esc: esc })
     <$> frames
     <*> arrowsInputs
     <*> aBtn
     <*> bBtn
+    <*> escBtn
 
 arrows :: forall e. Eff (dom :: DOM | e) (Signal { x :: Number, y :: Number })               
 arrows = do
@@ -52,3 +55,6 @@ xKeyCode :: Int
 xKeyCode = 88
 zKeyCode :: Int
 zKeyCode = 90
+
+escKeyCode :: Int
+escKeyCode = 27

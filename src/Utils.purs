@@ -5,7 +5,12 @@ import Graphics.Canvas as C
 import Data.Lens (Lens', lens)
 import Data.Maybe (Maybe)
 import Data.Tuple (Tuple(Tuple))
+import Debug.Trace (trace)
 import Graphics.Canvas (CANVAS)
+import Prelude (show, (<>), class Show)
+
+spyShow :: forall a. Show a => String -> a -> a
+spyShow desc a = trace (desc <> ": " <> show a) (\_ -> a)
 
 width :: Number
 width = 1024.0
