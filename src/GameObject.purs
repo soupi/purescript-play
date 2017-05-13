@@ -73,10 +73,10 @@ rect3 = do
 ------------
 
 moveObj :: Point -> GameObject -> GameObject
-moveObj direction rect =
+moveObj direction' rect =
   case rect.collision of
     Nothing ->
-      over (pos <<< y) (_ + (direction.y * rect.speed)) <<< over (pos <<< x) (_ + (direction.x * rect.speed)) $ rect
+      over (pos <<< y) (_ + (direction'.y * rect.speed)) <<< over (pos <<< x) (_ + (direction'.x * rect.speed)) $ rect
     Just dir ->
       let direction = { x: -dir.x, y: -dir.y }
       in
@@ -101,7 +101,7 @@ undoCollision rect =
 renderObj :: forall e. C.Context2D -> GameObject -> Eff ( canvas :: C.CANVAS | e) Unit
 renderObj ctx state = do
   let obj = calculateSizeAndPosFromBB state
-  C.drawImageScale ctx state.image obj.x obj.y obj.width obj.height
+  _ <- C.drawImageScale ctx state.image obj.x obj.y obj.width obj.height
   pure unit
 
 showCol :: Maybe Point -> String

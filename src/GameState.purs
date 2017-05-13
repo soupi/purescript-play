@@ -50,12 +50,12 @@ type State
 ------------
 
 update :: I.Input -> State -> Tuple ST.Command State
-update input state = Tuple (if input.esc then ST.Done else ST.None) $
+update input state' = Tuple (if input.esc then ST.Done else ST.None) $
   undoCollisions $
   collisionLayers $
   (\state -> { objs1: map (moveObj input.direction) state.objs1
   , objs2: map (moveObj input.direction) state.objs2
-  }) $ updateGravity $ collisionLayers state
+  }) $ updateGravity $ collisionLayers state'
 
 collisionLayers :: State -> State
 collisionLayers state =
@@ -92,13 +92,13 @@ groundFunc p =
 
 render :: forall e. C.Context2D -> State -> Eff ( canvas :: C.CANVAS | e) Unit
 render context state = do
-  clearCanvas context
-  traverse (renderObj context) state.objs1
-  traverse (renderObj context) state.objs2
+  _ <- clearCanvas context
+  _ <- traverse (renderObj context) state.objs1
+  _ <- traverse (renderObj context) state.objs2
   pure unit
 
 clearCanvas :: forall e. Context2D -> Eff ( canvas :: CANVAS | e ) Context2D
 clearCanvas ctx = do
-  C.setFillStyle "#1B1C1B" ctx
+  _ <- C.setFillStyle "#1B1C1B" ctx
   C.fillRect ctx { x: 0.0, y: 0.0, w: 1024.0, h: 800.0 }
 

@@ -19,8 +19,8 @@ import Signal (runSignal, foldp) as S
 
 
 main :: forall e.
-        Eff ( canvas :: CANVAS , err :: EXCEPTION , console :: CONSOLE , dom :: DOM , timer :: TIMER | e )
-            (Canceler ( console :: CONSOLE , canvas :: CANVAS , dom :: DOM , timer :: TIMER | e ) )
+        Eff (canvas :: CANVAS, exception :: EXCEPTION, console :: CONSOLE, dom :: DOM, timer :: TIMER | e )
+            (Canceler (console :: CONSOLE, canvas :: CANVAS, dom :: DOM, timer :: TIMER | e ) )
 main = do
   c <- C.getCanvasElementById "canvas"
   let f = ST.pop <<< ST.init
